@@ -71,37 +71,7 @@ if(${ZT_CPU_PLATFORM} STREQUAL GD32)
     )
 
 elseif(${ZT_CPU_PLATFORM} STREQUAL STM32)
-#     list(APPEND ${PROJECT_NAME}_DEFINES -DSTM32_PLATFORM)
 
-#     # Add HAL components if defined
-#     if(ADC IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/adc.cpp)
-#     endif()
-#     if(CAN IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/can.cpp)
-#     endif()
-#     if(GPIO IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/gpio.cpp)
-#     endif()
-#     if(I2C IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/i2c.cpp)
-#     endif()
-#     if(SPI IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/spi.cpp)
-#     endif()
-#     if(TIMER IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/timer.cpp)
-#     endif()
-#     if(UART IN_LIST ZT_HAL)
-#         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/uart.cpp)
-#     endif()
-
-    # # Add common platform components
-    # list(APPEND ${PROJECT_NAME}_SOURCES
-    #     ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/syscalls.c
-    #     ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/system.cpp
-    #     ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/version.cpp
-    # )
 
 elseif(${ZT_CPU_PLATFORM} STREQUAL ESP32)
     list(APPEND ${PROJECT_NAME}_DEFINES -DESP32_PLATFORM)
