@@ -96,12 +96,12 @@ elseif(${ZT_CPU_PLATFORM} STREQUAL STM32)
 #         list(APPEND ${PROJECT_NAME}_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/uart.cpp)
 #     endif()
 
-    # Add common platform components
-    list(APPEND ${PROJECT_NAME}_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/syscalls.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/system.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/version.cpp
-    )
+    # # Add common platform components
+    # list(APPEND ${PROJECT_NAME}_SOURCES
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/syscalls.c
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/system.cpp
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/version.cpp
+    # )
 
 elseif(${ZT_CPU_PLATFORM} STREQUAL ESP32)
     list(APPEND ${PROJECT_NAME}_DEFINES -DESP32_PLATFORM)
