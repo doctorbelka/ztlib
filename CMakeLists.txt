@@ -75,6 +75,10 @@ elseif(${ZT_CPU_PLATFORM} STREQUAL STM32)
     list(APPEND ${PROJECT_NAME}_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/system.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/version.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/timer.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/gpio.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/spi.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/uart.cpp
     )
 
 elseif(${ZT_CPU_PLATFORM} STREQUAL ESP32)
