@@ -113,7 +113,7 @@ public:
         }
 
         // Write if delegate was set
-        deleg_.write.call_if(buf, sizeof(buf));
+        deleg_.write.call_if(static_cast<const void*>(buf), sizeof(buf));
     }
 
     /// @brief Writes ACK flag that mean success reception of the last message
