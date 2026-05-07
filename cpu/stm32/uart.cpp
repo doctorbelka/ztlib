@@ -20,7 +20,6 @@ bool P_Uart::open()
         return false;
 
     setOpened(true);
-    start();
     return true;
 }
 

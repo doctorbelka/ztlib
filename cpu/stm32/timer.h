@@ -1,31 +1,55 @@
 #pragma once
 
+#include "periph/timer.h"
 #include "tim.h"
 
-#ifdef __cplusplus
-
-class TimerStm32 {
-public:
+namespace stm32{
     enum class Mode {
         OnePulse,
         Toggle,
     };
 
-    TimerStm32(TIM_HandleTypeDef* htim, Mode mode = Mode::Toggle);
 
-    void start();
-    void stop();
+    enum Channel {
+        Channel1 = TIM_CHANNEL_1,
+        Channel2 = TIM_CHANNEL_2,
+        Channel3 = TIM_CHANNEL_3,
+        Channel4 = TIM_CHANNEL_4,
+        Channel5 = TIM_CHANNEL_5,
+        Channel6 = TIM_CHANNEL_6,
+        ChannelAll = TIM_CHANNEL_ALL,
+    };
+
+class Timer : public ::Timer {
+public:
+    Timer(TIM_HandleTypeDef* htim, Channel channel, Mode mode = Mode::Toggle);
+
+    bool setConfig(const void* drvConfig) override;
+    bool open() override;
+    void close() override;
+
+    bool ioctl(uint32_t cmd, void* pValue) override;
+
+    void start() override;
+    void stop() override;
+
+    uint32_t captured() const override;
+    void setCounter(uint32_t counter) override;
+    uint32_t counter() const override;
 
     static void irqHandler(TIM_HandleTypeDef* htim);
+
+    TIM_HandleTypeDef* getHandler() {
+        return htim_;
+    }
 
 private:
     TIM_HandleTypeDef* htim_;
     Mode mode_;
-
-    static TimerStm32* instances_[3];
+    Channel channel_;
     static int getTimerIndex(TIM_TypeDef* instance);
 };
 
-#endif // __cplusplus
+}
 
 
