@@ -10,14 +10,9 @@ public:
         : port_(port), pin_(pin) {}
 
     void set() override;
-
     void reset() override;
-
     void toggle();
-
     bool get() const override;
-
-
 
     bool setConfig(const void* drvConfig) override;
     bool open() override;
