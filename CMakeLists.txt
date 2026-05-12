@@ -77,6 +77,7 @@ elseif(${ZT_CPU_PLATFORM} STREQUAL STM32)
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/version.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/timer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/gpio.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/i2c.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/spi.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpu/stm32/uart.cpp
     )
