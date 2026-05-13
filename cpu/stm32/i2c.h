@@ -13,7 +13,6 @@ namespace stm32 {
 
 struct I2cConfig {
     I2C_HandleTypeDef* hi2c;
-    uint16_t devAddr;
     uint32_t timeout;
 };
 

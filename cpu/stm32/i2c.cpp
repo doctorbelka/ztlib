@@ -56,11 +56,16 @@ bool I2c::ioctl(uint32_t cmd, void* pValue)
 
     switch (cmd) {
     case kSetAddress:
-        config_.devAddr = *static_cast<uint16_t*>(pValue);
-        return true;
+        if (pValue != nullptr) {
+            setAddr(*static_cast<int32_t*>(pValue));
+            return true;
+        }
+        break;
     default:
-        return false;
+        break;
     }
+
+    return false;
 }
 
 int32_t I2c::write_(const void* buf, uint32_t len)
@@ -69,7 +74,8 @@ int32_t I2c::write_(const void* buf, uint32_t len)
         return -1;
     }
 
-    if (HAL_I2C_Master_Transmit(config_.hi2c, config_.devAddr, static_cast<uint8_t*>(const_cast<void*>(buf)), len, config_.timeout) != HAL_OK) {
+    int32_t addr = getAddr() >= 0 ? (getAddr() << 1) : -1;
+    if (HAL_I2C_Master_Transmit(config_.hi2c, addr, static_cast<uint8_t*>(const_cast<void*>(buf)), len, config_.timeout) != HAL_OK) {
         return -1;
     }
 
@@ -82,7 +88,8 @@ int32_t I2c::read_(void* buf, uint32_t len)
         return -1;
     }
 
-    if (HAL_I2C_Master_Receive(config_.hi2c, config_.devAddr, static_cast<uint8_t*>(buf), len, config_.timeout) != HAL_OK) {
+    int32_t addr = getAddr() >= 0 ? (getAddr() << 1) : -1;
+    if (HAL_I2C_Master_Receive(config_.hi2c, addr, static_cast<uint8_t*>(buf), len, config_.timeout) != HAL_OK) {
         return -1;
     }
 
