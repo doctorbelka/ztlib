@@ -2,7 +2,7 @@
 
 #include "periph/adc.h"
 
-#include "adc.h"
+#include "Core/Inc/adc.h"
 
 namespace stm32 {
 
