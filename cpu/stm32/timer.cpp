@@ -161,6 +161,237 @@
 // }             // ДОДЕЛАТЬ ПРЕРЫВАНИЕ
 
 
+
+
+
+
+// /******************************************************************************
+//  * @file    timer.cpp
+//  * @brief   STM32 timer driver
+//  ******************************************************************************/
+
+// #include "timer.h"
+
+// namespace stm32 {
+
+
+// static Timer* timerInstances_[3] = { nullptr };
+
+
+// static void setHandler(Timer* timer)
+// {
+//     int idx = Timer::getTimerIndex(timer->getHandler()->Instance);
+
+//     if (idx >= 0) {
+//         timerInstances_[idx] = timer;
+//     }
+// }
+
+
+// int Timer::getTimerIndex(TIM_TypeDef* instance)
+// {
+//     if (instance == TIM8)
+//         return 0;
+
+//     if (instance == TIM16)
+//         return 1;
+
+//     if (instance == TIM17)
+//         return 2;
+
+//     return -1;
+// }
+
+// Timer::Timer(TIM_HandleTypeDef* htim,
+//              Channel channel,
+//              Mode mode)
+//     : htim_(htim)
+//     , channel_(channel)
+//     , mode_(mode)
+// {
+// }
+
+// bool Timer::setConfig(const void* drvConfig)
+// {
+//     (void)drvConfig;
+//     return true;
+// }
+
+// bool Timer::open()
+// {
+//     if (isOpen() || htim_ == nullptr)
+//         return false;
+
+//     setHandler(this);
+
+//     setOpened(true);
+
+//     return true;
+// }
+
+// void Timer::close()
+// {
+//     if (!isOpen())
+//         return;
+
+//     stop();
+
+//     setOpened(false);
+// }
+
+// void Timer::start()
+// {
+//     if (!isOpen() || htim_ == nullptr)
+//         return;
+
+//     __HAL_TIM_SET_COUNTER(htim_, 0);
+
+//     switch (mode_) {
+
+//     case Mode::Base:
+//         HAL_TIM_Base_Start_IT(htim_);
+//         break;
+
+//     default:
+//         break;
+//     }
+// }
+
+// void Timer::stop()
+// {
+//     // if (!isOpen() || htim_ == nullptr)
+//     //     return;
+
+//     // HAL_TIM_Base_Stop_IT(htim_);
+//         if (!isOpen() || htim_ == nullptr)
+//         return;
+
+//     switch (mode_) {
+
+//     case Mode::Base:
+//         HAL_TIM_Base_Stop_IT(htim_);
+//         break;
+
+//     default:
+//         break;
+//     }
+// }
+
+// void Timer::startChannel(Channel channel,
+//                          ChannelType type)
+// {
+//     // if (!isOpen() || htim_ == nullptr)
+//     //     return;
+
+//     // if (type == ChannelType::Normal) {
+
+//     //     HAL_TIM_PWM_Start(htim_, channel);
+//     // }
+//     // else {
+
+//     //     HAL_TIMEx_PWMN_Start(htim_, channel);
+//     // }
+
+//     if (!isOpen() || htim_ == nullptr)
+//         return;
+
+//     __HAL_TIM_SET_COUNTER(htim_, 0);
+
+//     if (type == ChannelType::Normal) {
+
+//         HAL_TIM_PWM_Start(htim_, channel);
+
+//     } else {
+
+//         HAL_TIMEx_PWMN_Start(htim_, channel);
+//     }
+//     }
+
+
+// void Timer::stopChannel(Channel channel,
+//                         ChannelType type)
+// {
+//     // if (!isOpen() || htim_ == nullptr)
+//     //     return;
+
+//     // if (type == ChannelType::Normal) {
+
+//     //     HAL_TIM_PWM_Stop(htim_, channel);
+//     // }
+//     // else {
+
+//     //     HAL_TIMEx_PWMN_Stop(htim_, channel);
+//     // }
+//         if (!isOpen() || htim_ == nullptr)
+//         return;
+
+//     switch (mode_) {
+
+//     case Mode::Pwm:
+//     case Mode::OnePulse:
+
+//         if (type == ChannelType::Normal) {
+
+//             HAL_TIM_PWM_Stop(htim_, channel);
+
+//         } else {
+
+//             HAL_TIMEx_PWMN_Stop(htim_, channel);
+//         }
+
+//         break;
+
+//     default:
+//         break;
+//     }
+// }
+
+// uint32_t Timer::captured() const
+// {
+//     return 0;
+// }
+
+// void Timer::setCounter(uint32_t counter)
+// {
+//     __HAL_TIM_SET_COUNTER(htim_, counter);
+// }
+
+// uint32_t Timer::counter() const
+// {
+//     return __HAL_TIM_GET_COUNTER(htim_);
+// }
+
+// bool Timer::ioctl(uint32_t cmd, void* pValue)
+// {
+//     (void)cmd;
+//     (void)pValue;
+
+//     return false;
+// }
+
+// void Timer::irqHandler(TIM_HandleTypeDef* htim)
+// {
+//     if (htim == nullptr)
+//         return;
+
+//     int idx = getTimerIndex(htim->Instance);
+
+//     if (idx < 0)
+//         return;
+
+//     Timer* timer = timerInstances_[idx];
+
+//     if (timer == nullptr)
+//         return;
+
+//     // TIM update IRQ / OnePulse finished
+//     timer->generalCb().call_if();
+// }
+
+// } // namespace stm32
+
+
+
 /******************************************************************************
  * @file    timer.cpp
  * @brief   STM32 timer driver
@@ -170,9 +401,7 @@
 
 namespace stm32 {
 
-
 static Timer* timerInstances_[3] = { nullptr };
-
 
 static void setHandler(Timer* timer)
 {
@@ -182,7 +411,6 @@ static void setHandler(Timer* timer)
         timerInstances_[idx] = timer;
     }
 }
-
 
 int Timer::getTimerIndex(TIM_TypeDef* instance)
 {
@@ -199,8 +427,12 @@ int Timer::getTimerIndex(TIM_TypeDef* instance)
 }
 
 Timer::Timer(TIM_HandleTypeDef* htim,
+             Channel channel,
+             ChannelType channelType,
              Mode mode)
     : htim_(htim)
+    , channel_(channel)
+    , channelType_(channelType)
     , mode_(mode)
 {
 }
@@ -229,6 +461,7 @@ void Timer::close()
         return;
 
     stop();
+    stopChannel(channel_);
 
     setOpened(false);
 }
@@ -240,7 +473,26 @@ void Timer::start()
 
     __HAL_TIM_SET_COUNTER(htim_, 0);
 
-    HAL_TIM_Base_Start_IT(htim_);
+    switch (mode_) {
+
+    case Mode::Base:
+
+        HAL_TIM_Base_Start_IT(htim_);
+        break;
+
+    case Mode::Pwm:
+
+            startChannel(channel_);
+        break;
+
+    case Mode::OnePulse:
+
+        startChannel(channel_);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void Timer::stop()
@@ -248,7 +500,26 @@ void Timer::stop()
     if (!isOpen() || htim_ == nullptr)
         return;
 
-    HAL_TIM_Base_Stop_IT(htim_);
+    switch (mode_) {
+
+    case Mode::Base:
+
+        HAL_TIM_Base_Stop_IT(htim_);
+        break;
+
+    case Mode::Pwm:
+
+        stopChannel(channel_);
+        break;
+
+    case Mode::OnePulse:
+
+        stopChannel(channel_);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void Timer::startChannel(Channel channel,
@@ -257,11 +528,13 @@ void Timer::startChannel(Channel channel,
     if (!isOpen() || htim_ == nullptr)
         return;
 
+    __HAL_TIM_SET_COUNTER(htim_, 0);
+
     if (type == ChannelType::Normal) {
 
         HAL_TIM_PWM_Start(htim_, channel);
-    }
-    else {
+
+    } else {
 
         HAL_TIMEx_PWMN_Start(htim_, channel);
     }
@@ -276,8 +549,8 @@ void Timer::stopChannel(Channel channel,
     if (type == ChannelType::Normal) {
 
         HAL_TIM_PWM_Stop(htim_, channel);
-    }
-    else {
+
+    } else {
 
         HAL_TIMEx_PWMN_Stop(htim_, channel);
     }
@@ -297,6 +570,7 @@ uint32_t Timer::counter() const
 {
     return __HAL_TIM_GET_COUNTER(htim_);
 }
+
 
 bool Timer::ioctl(uint32_t cmd, void* pValue)
 {
@@ -321,7 +595,6 @@ void Timer::irqHandler(TIM_HandleTypeDef* htim)
     if (timer == nullptr)
         return;
 
-    // TIM update IRQ / OnePulse finished
     timer->generalCb().call_if();
 }
 

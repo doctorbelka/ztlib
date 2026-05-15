@@ -2,9 +2,9 @@
 #include "timer.h"
 
 extern stm32::Uart<4096> uart4;
-extern TimerStm32 timer16;
-extern TimerStm32 timer17;
-extern TimerStm32 timer8;
+extern stm32::Timer timer16;
+extern stm32::Timer timer17;
+extern stm32::Timer timer8;
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -22,7 +22,7 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM8)
     {
-        TimerStm32::irqHandler(htim);
+        stm32::Timer::irqHandler(htim);
     }
 }
 
@@ -31,6 +31,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM16 ||
         htim->Instance == TIM17)
     {
-        TimerStm32::irqHandler(htim);
+        stm32::Timer::irqHandler(htim);
     }
 }

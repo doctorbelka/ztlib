@@ -69,8 +69,9 @@
 namespace stm32 {
 
 enum class Mode {
+    Base,
     OnePulse,
-    Toggle,
+    Pwm,
 };
 
 enum class ChannelType {
@@ -88,7 +89,9 @@ enum Channel {
 class Timer : public ::Timer {
 public:
     Timer(TIM_HandleTypeDef* htim,
-          Mode mode = Mode::Toggle);
+          Channel channel,
+          ChannelType channelType = ChannelType::Normal,
+          Mode mode = Mode::Base);
 
     bool setConfig(const void* drvConfig) override;
 
@@ -122,6 +125,8 @@ public:
 
 private:
     TIM_HandleTypeDef* htim_;
+    Channel channel_;
+    ChannelType channelType_;
     Mode mode_;
 };
 
