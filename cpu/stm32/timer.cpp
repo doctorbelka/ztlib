@@ -461,7 +461,7 @@ void Timer::close()
         return;
 
     stop();
-    stopChannel(channel_);
+    stopChannel(channel_, channelType_);
 
     setOpened(false);
 }
@@ -481,13 +481,13 @@ void Timer::start()
         break;
 
     case Mode::Pwm:
-
-            startChannel(channel_);
-        break;
-
     case Mode::OnePulse:
 
-        startChannel(channel_);
+        /*
+         * channelType_ must be forwarded: with the default argument
+         * a Complementary channel (OCxN output) would never start.
+         */
+        startChannel(channel_, channelType_);
         break;
 
     default:
@@ -508,13 +508,9 @@ void Timer::stop()
         break;
 
     case Mode::Pwm:
-
-        stopChannel(channel_);
-        break;
-
     case Mode::OnePulse:
 
-        stopChannel(channel_);
+        stopChannel(channel_, channelType_);
         break;
 
     default:
