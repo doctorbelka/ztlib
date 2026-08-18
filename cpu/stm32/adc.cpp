@@ -24,6 +24,18 @@ bool Adc::open()
     if (isOpen() || hadc_ == nullptr)
         return false;
 
+    /*
+     * У H7 калибровка обязательна: без неё остаётся заводское смещение нуля,
+     * которое в 16-битном режиме доходит до процента шкалы. На канале 90 В
+     * это давало около 1,7 В на закороченном входе. Момент подходящий —
+     * калибровка требует ещё не запущенного преобразователя.
+     */
+    if (HAL_ADCEx_Calibration_Start(hadc_, ADC_CALIB_OFFSET_LINEARITY,
+            ADC_SINGLE_ENDED)
+        != HAL_OK) {
+        return false;
+    }
+
     setOpened(true);
 
     return true;
