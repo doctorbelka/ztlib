@@ -68,18 +68,38 @@ bool I2c::ioctl(uint32_t cmd, void* pValue)
     return false;
 }
 
+/*
+ * Номер регистра, заданный через write(reg, ...) / read(reg, ...), должен
+ * уходить в шину отдельным байтом перед данными — так адресуются регистры
+ * у INA226-совместимых мониторов и у EEPROM. Прежде getReg() здесь не
+ * использовался вовсе: на шину уходили только данные, ведомый принимал их
+ * первый байт за адрес регистра, и запись попадала не туда. Для TPA626 это
+ * означало, что регистр калибровки оставался нулевым, а при нулевой
+ * калибровке вычисляемый ток всегда равен нулю.
+ */
 int32_t I2c::write_(const void* buf, uint32_t len)
 {
     if (!isOpen()) {
         return -1;
     }
 
-    int32_t addr = getAddr() >= 0 ? (getAddr() << 1) : -1;
-    if (HAL_I2C_Master_Transmit(config_.hi2c, addr, static_cast<uint8_t*>(const_cast<void*>(buf)), len, config_.timeout) != HAL_OK) {
+    if (getAddr() < 0) {
         return -1;
     }
 
-    return len;
+    const uint16_t addr = static_cast<uint16_t>(getAddr() << 1);
+    const int32_t reg = getReg();
+    uint8_t* data = static_cast<uint8_t*>(const_cast<void*>(buf));
+
+    HAL_StatusTypeDef res;
+    if (reg >= 0) {
+        res = HAL_I2C_Mem_Write(config_.hi2c, addr, static_cast<uint16_t>(reg),
+            I2C_MEMADD_SIZE_8BIT, data, len, config_.timeout);
+    } else {
+        res = HAL_I2C_Master_Transmit(config_.hi2c, addr, data, len, config_.timeout);
+    }
+
+    return res == HAL_OK ? static_cast<int32_t>(len) : -1;
 }
 
 int32_t I2c::read_(void* buf, uint32_t len)
@@ -88,12 +108,23 @@ int32_t I2c::read_(void* buf, uint32_t len)
         return -1;
     }
 
-    int32_t addr = getAddr() >= 0 ? (getAddr() << 1) : -1;
-    if (HAL_I2C_Master_Receive(config_.hi2c, addr, static_cast<uint8_t*>(buf), len, config_.timeout) != HAL_OK) {
+    if (getAddr() < 0) {
         return -1;
     }
 
-    return len;
+    const uint16_t addr = static_cast<uint16_t>(getAddr() << 1);
+    const int32_t reg = getReg();
+    uint8_t* data = static_cast<uint8_t*>(buf);
+
+    HAL_StatusTypeDef res;
+    if (reg >= 0) {
+        res = HAL_I2C_Mem_Read(config_.hi2c, addr, static_cast<uint16_t>(reg),
+            I2C_MEMADD_SIZE_8BIT, data, len, config_.timeout);
+    } else {
+        res = HAL_I2C_Master_Receive(config_.hi2c, addr, data, len, config_.timeout);
+    }
+
+    return res == HAL_OK ? static_cast<int32_t>(len) : -1;
 }
 
 } // namespace stm32
