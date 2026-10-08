@@ -20,6 +20,9 @@ public:
 
     bool ioctl(uint32_t cmd, void* pValue)override;
 
+    GPIO_TypeDef* port() const { return port_; }
+    uint16_t pin() const { return pin_; }
+
 private:
     GPIO_TypeDef* port_;
     uint16_t pin_;
