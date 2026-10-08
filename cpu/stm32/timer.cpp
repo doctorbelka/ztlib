@@ -567,6 +567,15 @@ uint32_t Timer::counter() const
     return __HAL_TIM_GET_COUNTER(htim_);
 }
 
+uint32_t Timer::compare() const
+{
+    return __HAL_TIM_GET_COMPARE(htim_, channel_);
+}
+
+uint32_t Timer::prescaler() const
+{
+    return htim_->Instance->PSC;
+}
 
 bool Timer::ioctl(uint32_t cmd, void* pValue)
 {

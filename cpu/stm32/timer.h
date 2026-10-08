@@ -121,6 +121,9 @@ public:
         return htim_;
     }
 
+    uint32_t compare() const;
+    uint32_t prescaler() const;
+
     static int getTimerIndex(TIM_TypeDef* instance);
 
 private:
